@@ -25,6 +25,6 @@ public class DebitHandler {
                 return;
             }
             a.debit(debitCommand.getAmount());
-        }, () -> this.notificationContext.add("Document not found: " + document.getNumber(), ENotification.NOT_EXISTS));
+        }, () -> this.notificationContext.add("Document not found: " + document.getDocumentNumber(), ENotification.NOT_EXISTS));
     }
 }

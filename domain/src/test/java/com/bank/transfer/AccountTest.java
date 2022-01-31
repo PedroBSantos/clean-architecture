@@ -33,7 +33,7 @@ public class AccountTest {
         assertTrue(account.getBank().equals("033"));
         assertTrue(account.getBranch().equals("3"));
         assertTrue(account.getNumber().equals(idAccount));
-        assertTrue(account.getDocument().getNumber().equals("431.006.250-48"));
+        assertTrue(account.getDocument().getDocumentNumber().equals("431.006.250-48"));
         assertTrue(account.getDocument().getDocumentType() == EDocument.CPF);
         assertTrue(account.balance() == 0.0f);
         account.credit(1000.0f);

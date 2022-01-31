@@ -31,8 +31,8 @@ public class TransferHandlerTest {
                 .withNumber(idAccount1).build();
         var account2 = new AccountBuilder(new Document("362.184.830-45", EDocument.CPF)).withBank("033").withBranch("8")
                 .withNumber(idAccount2).build();
-        this.accountRepository.save(account1);
-        this.accountRepository.save(account2);
+        this.accountRepository.create(account1);
+        this.accountRepository.create(account2);
     }
 
     @Test

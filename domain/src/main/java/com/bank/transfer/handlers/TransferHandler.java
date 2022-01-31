@@ -21,7 +21,7 @@ public class TransferHandler {
                 transferCommand.getDocumentAccountFromType());
         var accountFrom = this.accountRepository.find(documentAccountFrom);
         if (!accountFrom.isPresent()) {
-            this.notificationContext.add("Document not found: " + documentAccountFrom.getNumber(),
+            this.notificationContext.add("Document not found: " + documentAccountFrom.getDocumentNumber(),
                     ENotification.NOT_EXISTS);
             return;
         }
@@ -29,7 +29,7 @@ public class TransferHandler {
                 transferCommand.getDocumentAccountToType());
         var accountTo = this.accountRepository.find(documentAccountTo);
         if (!accountTo.isPresent()) {
-            this.notificationContext.add("Document not found: " + documentAccountTo.getNumber(),
+            this.notificationContext.add("Document not found: " + documentAccountTo.getDocumentNumber(),
                     ENotification.NOT_EXISTS);
             return;
         }
@@ -39,7 +39,7 @@ public class TransferHandler {
             return;
         }
         accountTo.get().credit(transferCommand.getAmount());
-        this.accountRepository.save(accountFrom.get());
-        this.accountRepository.save(accountTo.get());
+        this.accountRepository.create(accountFrom.get());
+        this.accountRepository.create(accountTo.get());
     }
 }

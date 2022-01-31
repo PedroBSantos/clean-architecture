@@ -17,7 +17,7 @@ public class AccountRepositoryFake implements AccountRepository {
     }
 
     @Override
-    public void save(Account account) {
+    public void create(Account account) {
         var accountExistent = this.accounts.stream().filter(a -> a.equals(account)).findFirst();
         accountExistent.ifPresentOrElse(a -> {
             this.accounts.remove(a);

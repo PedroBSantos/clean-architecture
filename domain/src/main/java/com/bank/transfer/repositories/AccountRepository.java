@@ -7,7 +7,7 @@ import com.bank.transfer.valueobjects.Document;
 
 public interface AccountRepository {
     
-    void save(Account account);
+    void create(Account account);
 
     Optional<Account> find(Document document);
 }

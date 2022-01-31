@@ -1,19 +1,30 @@
 package com.bank.transfer.valueobjects;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 import com.bank.transfer.enums.EDocument;
 
+@Embeddable
 public class Document {
 
-    private String number;
+    @Column(unique = true, nullable = false)
+    private String documentNumber;
+    @Enumerated(EnumType.STRING)
     private EDocument documentType;
 
-    public Document(String number, EDocument documentType) {
-        this.number = number;
+    protected Document() {
+    }
+
+    public Document(String documentNumber, EDocument documentType) {
+        this.documentNumber = documentNumber;
         this.documentType = documentType;
     }
 
-    public String getNumber() {
-        return number;
+    public String getDocumentNumber() {
+        return documentNumber;
     }
 
     public EDocument getDocumentType() {
@@ -25,7 +36,7 @@ public class Document {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((documentType == null) ? 0 : documentType.hashCode());
-        result = prime * result + ((number == null) ? 0 : number.hashCode());
+        result = prime * result + ((documentNumber == null) ? 0 : documentNumber.hashCode());
         return result;
     }
 
@@ -40,10 +51,10 @@ public class Document {
         Document other = (Document) obj;
         if (documentType != other.documentType)
             return false;
-        if (number == null) {
-            if (other.number != null)
+        if (documentNumber == null) {
+            if (other.documentNumber != null)
                 return false;
-        } else if (!number.equals(other.number))
+        } else if (!documentNumber.equals(other.documentNumber))
             return false;
         return true;
     }

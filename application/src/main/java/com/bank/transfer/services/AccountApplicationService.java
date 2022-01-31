@@ -26,10 +26,17 @@ public class AccountApplicationService {
         this.notificationContext = notificationContext;
     }
 
-    public void createAccount(String bank, String branch, String document, EDocument documentType) {
-        var account = new AccountBuilder(new Document(document, documentType)).withBank(bank).withBranch(branch)
+    public UUID createAccount(String bank, String branch, String document, EDocument documentType) {
+        var accountDocument = new Document(document, documentType);
+        var account = new AccountBuilder(accountDocument).withBank(bank).withBranch(branch)
                 .withNumber(UUID.randomUUID()).build();
-        this.accountRepository.save(account);
+        if (!this.accountRepository.find(accountDocument).isPresent()) {
+            this.accountRepository.create(account);
+            return account.getNumber();
+        }
+        this.notificationContext.add("Already exists a account with document number: " + document,
+                ENotification.DUPLICATED);
+        return account.getNumber();
     }
 
     public GetAccountModel getAccount(String documentNumber, EDocument documentType) {
@@ -41,7 +48,8 @@ public class AccountApplicationService {
             serviceReturn.setBank(a.getBank());
             serviceReturn.setBranch(a.getBranch());
             serviceReturn.setBalance(a.balance());
-        }, () -> this.notificationContext.add("Document not found: " + document.getNumber(), ENotification.NOT_EXISTS));
+        }, () -> this.notificationContext.add("Document not found: " + document.getDocumentNumber(),
+                ENotification.NOT_EXISTS));
         return serviceReturn;
     }
 

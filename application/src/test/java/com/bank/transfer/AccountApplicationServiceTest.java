@@ -32,8 +32,8 @@ public class AccountApplicationServiceTest {
                 .withNumber(idAccount1).build();
         var account2 = new AccountBuilder(new Document("362.184.830-45", EDocument.CPF)).withBank("033").withBranch("8")
                 .withNumber(idAccount2).build();
-        this.accountRepository.save(account1);
-        this.accountRepository.save(account2);
+        this.accountRepository.create(account1);
+        this.accountRepository.create(account2);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class AccountApplicationServiceTest {
         var notificationContext = new NotificationContext();
         var accountApplicationService = new AccountApplicationService(this.accountRepository, notificationContext);
         var document = "431.006.250-48";
-        var documentType = EDocument.CPNJ;
+        var documentType = EDocument.CNPJ;
         var account = accountApplicationService.getAccount(document, documentType);
         assertNotNull(account);
         assertNull(account.getAccountNumber());

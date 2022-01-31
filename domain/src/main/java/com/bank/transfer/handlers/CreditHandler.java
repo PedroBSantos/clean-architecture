@@ -20,6 +20,6 @@ public class CreditHandler {
         var document = new Document(creditCommand.getDocument(), creditCommand.getDocumentType());
         var account = this.accountRepository.find(document);
         account.ifPresentOrElse(a -> a.credit(creditCommand.getAmount()), () -> this.notificationContext
-                .add("Document not found: " + document.getNumber(), ENotification.NOT_EXISTS));
+                .add("Document not found: " + document.getDocumentNumber(), ENotification.NOT_EXISTS));
     }
 }

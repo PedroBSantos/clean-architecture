@@ -5,16 +5,29 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import com.bank.transfer.builders.AccountBuilder;
 import com.bank.transfer.enums.ETransaction;
 import com.bank.transfer.valueobjects.Document;
 
+@Entity
+@Table(name = "accounts")
 public class Account {
 
+    @Id
+    @Column(updatable = false, nullable = false)
     private UUID number;
     private String bank;
     private String branch;
+    @Embedded
     private Document document;
+    @OneToMany(mappedBy = "account")
     private List<Transaction> transactions;
 
     protected Account() {
@@ -53,7 +66,7 @@ public class Account {
         if (amount < 0) {
             return false;
         }
-        this.transactions.add(new Transaction(ETransaction.CREDIT, amount));
+        this.transactions.add(new Transaction(this, ETransaction.CREDIT, amount));
         return true;
     }
 
@@ -61,7 +74,7 @@ public class Account {
         if (this.balance() < amount) {
             return false;
         }
-        this.transactions.add(new Transaction(ETransaction.DEBIT, amount));
+        this.transactions.add(new Transaction(this, ETransaction.DEBIT, amount));
         return true;
     }
 
