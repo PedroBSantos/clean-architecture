@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiResponses;
 import javax.validation.Valid;
 
 import com.bank.transfer.models.CreateAccountModel;
+import com.bank.transfer.models.CreditAccountModel;
 import com.bank.transfer.models.GetAccountModel;
 import com.bank.transfer.models.GetAccountRequest;
 import com.bank.transfer.services.AccountApplicationService;
@@ -70,5 +71,21 @@ public class AccountController {
         var account = this.accountApplicationService.getAccount(getAccountRequest.getDocumentNumber(),
                 getAccountRequest.getDocumentType());
         return ResponseEntity.ok(account);
+    }
+
+    @PreAuthorize("hasAnyAuthority('USER')")
+    @PostMapping(value = "/credit")
+    @Transactional(readOnly = false)
+    @ResponseStatus(code = HttpStatus.OK)
+    @ApiOperation(value = "Creditar em uma conta")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operação concluida com sucesso"),
+            @ApiResponse(code = 400, message = "Requisição mal formatada"),
+            @ApiResponse(code = 404, message = "Recurso não encontrado"),
+            @ApiResponse(code = 500, message = "Exceção gerada") })
+    public ResponseEntity<?> creditAccount(@RequestBody @Valid CreditAccountModel creditAccountModel) {
+        this.accountApplicationService.creditAccount(creditAccountModel.getDocumentType(),
+                creditAccountModel.getDocumentNumber(), creditAccountModel.getAmount());
+        return ResponseEntity.ok().build();
     }
 }

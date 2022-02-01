@@ -51,7 +51,7 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
         Set<String> realmRoles = new HashSet<>();
         JsonNode json = objectMapper.convertValue(jwt.getClaim("realm_access"), JsonNode.class);
         json.elements().forEachRemaining(
-                e -> e.elements().forEachRemaining(r -> realmRoles.add(r.asText())));
+                e -> e.elements().forEachRemaining(r -> realmRoles.add(r.asText().toUpperCase())));
         return realmRoles;
     }
 
@@ -66,7 +66,7 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
                     .elements()
                     .forEachRemaining(e -> e
                             .elements()
-                            .forEachRemaining(r -> roles.add(r.asText())));
+                            .forEachRemaining(r -> roles.add(r.asText().toUpperCase())));
         }
         return roles;
     }
