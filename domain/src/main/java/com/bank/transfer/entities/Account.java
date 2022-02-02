@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -27,7 +28,7 @@ public class Account {
     private String branch;
     @Embedded
     private Document document;
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Transaction> transactions;
 
     protected Account() {
@@ -63,7 +64,7 @@ public class Account {
     }
 
     public boolean credit(float amount) {
-        if (amount < 0) {
+        if (amount < 0.0f) {
             return false;
         }
         this.transactions.add(new Transaction(this, ETransaction.CREDIT, amount));
@@ -71,7 +72,7 @@ public class Account {
     }
 
     public boolean debit(float amount) {
-        if (this.balance() < amount) {
+        if (this.balance() < amount || amount <= 0.0f) {
             return false;
         }
         this.transactions.add(new Transaction(this, ETransaction.DEBIT, amount));

@@ -17,8 +17,10 @@ import javax.validation.Valid;
 
 import com.bank.transfer.models.CreateAccountModel;
 import com.bank.transfer.models.CreditAccountModel;
+import com.bank.transfer.models.DebitAccountModel;
 import com.bank.transfer.models.GetAccountModel;
 import com.bank.transfer.models.GetAccountRequest;
+import com.bank.transfer.models.TransferAccountModel;
 import com.bank.transfer.services.AccountApplicationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,9 +85,43 @@ public class AccountController {
             @ApiResponse(code = 400, message = "Requisição mal formatada"),
             @ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 500, message = "Exceção gerada") })
-    public ResponseEntity<?> creditAccount(@RequestBody @Valid CreditAccountModel creditAccountModel) {
-        this.accountApplicationService.creditAccount(creditAccountModel.getDocumentType(),
-                creditAccountModel.getDocumentNumber(), creditAccountModel.getAmount());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CreditAccountModel> creditAccount(@RequestBody @Valid CreditAccountModel creditAccountModel) {
+            this.accountApplicationService.creditAccount(creditAccountModel.getDocumentType(),
+                            creditAccountModel.getDocumentNumber(), creditAccountModel.getAmount());
+            return ResponseEntity.ok(creditAccountModel);
+    }
+    
+    @PreAuthorize("hasAnyAuthority('USER')")
+    @PostMapping(value = "/debit")
+    @Transactional(readOnly = false)
+    @ResponseStatus(code = HttpStatus.OK)
+    @ApiOperation(value = "Debitar uma conta")
+    @ApiResponses(value = {
+                    @ApiResponse(code = 200, message = "Operação concluida com sucesso"),
+                    @ApiResponse(code = 400, message = "Requisição mal formatada"),
+                    @ApiResponse(code = 404, message = "Recurso não encontrado"),
+                    @ApiResponse(code = 500, message = "Exceção gerada") })
+    public ResponseEntity<DebitAccountModel> debitAccount(@RequestBody @Valid DebitAccountModel debitAccountModel) {
+            this.accountApplicationService.debitAccount(debitAccountModel.getDocumentType(),
+                            debitAccountModel.getDocumentNumber(), debitAccountModel.getAmount());
+            return ResponseEntity.ok(debitAccountModel);
+    }
+
+    @PreAuthorize("hasAnyAuthority('USER')")
+    @PostMapping(value = "/transfer")
+    @Transactional(readOnly = false)
+    @ResponseStatus(code = HttpStatus.OK)
+    @ApiOperation(value = "Transferência entre contas")
+    @ApiResponses(value = {
+                    @ApiResponse(code = 200, message = "Operação concluida com sucesso"),
+                    @ApiResponse(code = 400, message = "Requisição mal formatada"),
+                    @ApiResponse(code = 404, message = "Recurso não encontrado"),
+                    @ApiResponse(code = 500, message = "Exceção gerada") })
+    public ResponseEntity<TransferAccountModel> transferAccount(@RequestBody @Valid TransferAccountModel transferAccountModel) {
+            this.accountApplicationService.transferAccounts(transferAccountModel.getDocumentTypeSource(), transferAccountModel.getDocumentNumberSource(), 
+                            transferAccountModel.getDocumentTypeDestiny(),
+                            transferAccountModel.getDocumentNumberDestiny(), 
+                            transferAccountModel.getAmount());
+            return ResponseEntity.ok(transferAccountModel);
     }
 }

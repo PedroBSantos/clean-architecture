@@ -20,11 +20,13 @@ public class DebitHandler {
         var document = new Document(debitCommand.getDocument(), debitCommand.getDocumentType());
         var account = this.accountRepository.find(document);
         account.ifPresentOrElse(a -> {
-            if (a.balance() < debitCommand.getAmount()) {
-                this.notificationContext.add("Account balance insufficent", ENotification.VALIDATION);
+            if (!a.debit(debitCommand.getAmount())) {
+                this.notificationContext.add("Account balance insufficent or invalid debit amount",
+                        ENotification.VALIDATION);
                 return;
             }
-            a.debit(debitCommand.getAmount());
-        }, () -> this.notificationContext.add("Document not found: " + document.getDocumentNumber(), ENotification.NOT_EXISTS));
+            this.accountRepository.create(a);
+        }, () -> this.notificationContext.add("Document not found: " + document.getDocumentNumber(),
+                ENotification.NOT_EXISTS));
     }
 }

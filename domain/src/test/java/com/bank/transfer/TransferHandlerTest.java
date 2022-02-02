@@ -63,4 +63,16 @@ public class TransferHandlerTest {
                 .anyMatch(notification -> notification.getNotificationType() == ENotification.VALIDATION));
         assertTrue(!notificationContext.getNotifications().isEmpty());
     }
+
+    @Test
+    public void shouldNotTransferAmountSameAccounts() {
+        var notificationContext = new NotificationContext();
+        var transferCommand = new TransferCommand("431.006.250-48", EDocument.CPF,
+                "431.006.250-48", EDocument.CPF, 1000.0f);
+        var transferHandler = new TransferHandler(accountRepository, notificationContext);
+        transferHandler.handler(transferCommand);
+        assertTrue(notificationContext.getNotifications().stream()
+                .anyMatch(notification -> notification.getNotificationType() == ENotification.VALIDATION));
+        assertTrue(!notificationContext.getNotifications().isEmpty());
+    }
 }

@@ -64,4 +64,15 @@ public class DebitHandlerTest {
         assertTrue(notificationContext.getNotifications().stream()
                 .anyMatch(notification -> notification.getNotificationType() == ENotification.VALIDATION));
     }
+
+    @Test
+    public void shouldNotDebitAccountNegativeOrZeroAmount() {
+        var notificationContext = new NotificationContext();
+        var debitCommand = new DebitCommand(EDocument.CPF, "431.006.250-48", -1.0f);
+        var debitHandler = new DebitHandler(accountRepository, notificationContext);
+        debitHandler.handler(debitCommand);
+        assertTrue(!notificationContext.getNotifications().isEmpty());
+        assertTrue(notificationContext.getNotifications().stream()
+                .anyMatch(notification -> notification.getNotificationType() == ENotification.VALIDATION));
+    }
 }

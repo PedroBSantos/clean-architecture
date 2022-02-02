@@ -33,6 +33,11 @@ public class TransferHandler {
                     ENotification.NOT_EXISTS);
             return;
         }
+        if (accountFrom.equals(accountTo)) {
+            this.notificationContext.add("You can not transfer to the same account",
+                    ENotification.VALIDATION);
+            return;
+        }
         if (!accountFrom.get().debit(transferCommand.getAmount())) {
             this.notificationContext.add("Account: " + accountFrom.get().getNumber() + " balance insufficent",
                     ENotification.VALIDATION);
