@@ -27,12 +27,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
             http.headers().frameOptions().disable();
         }
-        http.cors().and().csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests(a -> a.anyRequest().authenticated()).oauth2ResourceServer()
+        http.authorizeRequests(a -> a.antMatchers("/accounts/**").authenticated()).oauth2ResourceServer()
                 .jwt().jwtAuthenticationConverter(keycloakJwtAuthenticationConverter);
     }
 

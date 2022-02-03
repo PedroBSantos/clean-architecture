@@ -1,6 +1,7 @@
 package com.bank.transfer.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,13 +15,11 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
-import com.bank.transfer.models.CreateAccountModel;
-import com.bank.transfer.models.CreditAccountModel;
-import com.bank.transfer.models.DebitAccountModel;
-import com.bank.transfer.models.GetAccountModel;
-import com.bank.transfer.models.GetAccountRequest;
-import com.bank.transfer.models.TransferAccountModel;
+import com.bank.transfer.enums.EDocument;
+import com.bank.transfer.models.*;
 import com.bank.transfer.services.AccountApplicationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 @RestController
-@RequestMapping(value = "/accounts", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/accounts")
 @Api(tags = "Accounts", description = "AccountController")
 public class AccountController {
 
@@ -42,7 +41,7 @@ public class AccountController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = false)
     @ResponseStatus(code = HttpStatus.CREATED)
     @ApiOperation(value = "Cria uma nova conta")
@@ -51,16 +50,16 @@ public class AccountController {
             @ApiResponse(code = 400, message = "Requisição mal formatada"),
             @ApiResponse(code = 409, message = "Recurso já existe"),
             @ApiResponse(code = 500, message = "Exceção gerada") })
-    public ResponseEntity<CreateAccountModel> createAccount(@RequestBody @Valid CreateAccountModel createAccountModel) {
-        var uuid = this.accountApplicationService.createAccount(createAccountModel.getBank(),
+    public ResponseEntity<GetAccountModel> createAccount(@RequestBody @Valid CreateAccountModel createAccountModel) {
+        var accountCreated = this.accountApplicationService.createAccount(createAccountModel.getBank(),
                 createAccountModel.getBranch(),
                 createAccountModel.getDocumentNumber(), createAccountModel.getDocumentType());
-        var uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(uuid).toUri();
-        return ResponseEntity.created(uri).body(createAccountModel);
+        var uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(accountCreated.getAccountNumber()).toUri();
+        return ResponseEntity.created(uri).body(accountCreated);
     }
 
     @PreAuthorize("hasAnyAuthority('USER')")
-    @GetMapping
+    @GetMapping(value = "/{documentNumber}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     @ResponseStatus(code = HttpStatus.OK)
     @ApiOperation(value = "Obtem uma conta")
@@ -69,14 +68,13 @@ public class AccountController {
             @ApiResponse(code = 400, message = "Requisição mal formatada"),
             @ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 500, message = "Exceção gerada") })
-    public ResponseEntity<GetAccountModel> getAccount(@RequestBody @Valid GetAccountRequest getAccountRequest) {
-        var account = this.accountApplicationService.getAccount(getAccountRequest.getDocumentNumber(),
-                getAccountRequest.getDocumentType());
+    public ResponseEntity<GetAccountModel> getAccount(@PathVariable @NotBlank @NotEmpty String documentNumber, @PathVariable EDocument documentType) {
+        var account = this.accountApplicationService.getAccount(documentNumber, documentType);
         return ResponseEntity.ok(account);
     }
 
     @PreAuthorize("hasAnyAuthority('USER')")
-    @PostMapping(value = "/credit")
+    @PostMapping(value = "/credit", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = false)
     @ResponseStatus(code = HttpStatus.OK)
     @ApiOperation(value = "Creditar em uma conta")
@@ -92,7 +90,7 @@ public class AccountController {
     }
     
     @PreAuthorize("hasAnyAuthority('USER')")
-    @PostMapping(value = "/debit")
+    @PostMapping(value = "/debit", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = false)
     @ResponseStatus(code = HttpStatus.OK)
     @ApiOperation(value = "Debitar uma conta")
@@ -108,7 +106,7 @@ public class AccountController {
     }
 
     @PreAuthorize("hasAnyAuthority('USER')")
-    @PostMapping(value = "/transfer")
+    @PostMapping(value = "/transfer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = false)
     @ResponseStatus(code = HttpStatus.OK)
     @ApiOperation(value = "Transferência entre contas")

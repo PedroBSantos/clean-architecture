@@ -1,4 +1,4 @@
-package com.bank.transfer;
+package com.bank.transfer.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
-public class AppTest {
+public class AccountControllerTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
