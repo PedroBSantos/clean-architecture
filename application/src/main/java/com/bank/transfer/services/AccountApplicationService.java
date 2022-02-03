@@ -26,31 +26,36 @@ public class AccountApplicationService {
         this.notificationContext = notificationContext;
     }
 
-    public UUID createAccount(String bank, String branch, String document, EDocument documentType) {
+    public GetAccountModel createAccount(String bank, String branch, String document, EDocument documentType) {
         var accountDocument = new Document(document, documentType);
         var account = new AccountBuilder(accountDocument).withBank(bank).withBranch(branch)
                 .withNumber(UUID.randomUUID()).build();
+        var getAccountModel = new GetAccountModel();
         if (!this.accountRepository.find(accountDocument).isPresent()) {
             this.accountRepository.create(account);
-            return account.getNumber();
+            getAccountModel.setAccountNumber(account.getNumber());
+            getAccountModel.setBank(account.getBank());
+            getAccountModel.setBranch(account.getBranch());
+            getAccountModel.setBalance(account.balance());
+            return getAccountModel;
         }
         this.notificationContext.add("Already exists a account with document number: " + document,
                 ENotification.DUPLICATED);
-        return account.getNumber();
+        return getAccountModel;
     }
 
     public GetAccountModel getAccount(String documentNumber, EDocument documentType) {
         var document = new Document(documentNumber, documentType);
         var account = this.accountRepository.find(document);
-        var serviceReturn = new GetAccountModel();
+        var getAccountModel = new GetAccountModel();
         account.ifPresentOrElse(a -> {
-            serviceReturn.setAccountNumber(a.getNumber());
-            serviceReturn.setBank(a.getBank());
-            serviceReturn.setBranch(a.getBranch());
-            serviceReturn.setBalance(a.balance());
+            getAccountModel.setAccountNumber(a.getNumber());
+            getAccountModel.setBank(a.getBank());
+            getAccountModel.setBranch(a.getBranch());
+            getAccountModel.setBalance(a.balance());
         }, () -> this.notificationContext.add("Document not found: " + document.getDocumentNumber(),
                 ENotification.NOT_EXISTS));
-        return serviceReturn;
+        return getAccountModel;
     }
 
     public void creditAccount(EDocument documentType, String documentNumber, float amount) {
