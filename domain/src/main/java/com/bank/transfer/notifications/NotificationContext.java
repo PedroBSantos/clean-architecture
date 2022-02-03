@@ -1,12 +1,9 @@
-package com.bank.transfer.context;
+package com.bank.transfer.notifications;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.bank.transfer.enums.ENotification;
-import com.bank.transfer.valueobjects.Notification;
 
 public class NotificationContext {
     

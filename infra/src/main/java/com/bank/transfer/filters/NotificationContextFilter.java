@@ -1,7 +1,7 @@
 package com.bank.transfer.filters;
 
-import com.bank.transfer.context.NotificationContext;
-import com.bank.transfer.enums.ENotification;
+import com.bank.transfer.notifications.ENotification;
+import com.bank.transfer.notifications.NotificationContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;

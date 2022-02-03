@@ -6,13 +6,13 @@ import com.bank.transfer.builders.AccountBuilder;
 import com.bank.transfer.commands.CreditCommand;
 import com.bank.transfer.commands.DebitCommand;
 import com.bank.transfer.commands.TransferCommand;
-import com.bank.transfer.context.NotificationContext;
 import com.bank.transfer.enums.EDocument;
-import com.bank.transfer.enums.ENotification;
 import com.bank.transfer.handlers.CreditHandler;
 import com.bank.transfer.handlers.DebitHandler;
 import com.bank.transfer.handlers.TransferHandler;
 import com.bank.transfer.models.GetAccountModel;
+import com.bank.transfer.notifications.ENotification;
+import com.bank.transfer.notifications.NotificationContext;
 import com.bank.transfer.repositories.AccountRepository;
 import com.bank.transfer.valueobjects.Document;
 

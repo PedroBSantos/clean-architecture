@@ -1,6 +1,6 @@
 package com.bank.transfer.configuration;
 
-import com.bank.transfer.context.NotificationContext;
+import com.bank.transfer.notifications.NotificationContext;
 import com.bank.transfer.repositories.AccountRepository;
 import com.bank.transfer.services.AccountApplicationService;
 

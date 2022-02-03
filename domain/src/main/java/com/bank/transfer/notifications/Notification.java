@@ -1,6 +1,4 @@
-package com.bank.transfer.valueobjects;
-
-import com.bank.transfer.enums.ENotification;
+package com.bank.transfer.notifications;
 
 import java.time.Instant;
 
